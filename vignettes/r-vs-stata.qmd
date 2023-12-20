@@ -1,0 +1,193 @@
+---
+title: "R vs. STATA"
+format:
+  pdf:
+    toc: false
+  html:
+    toc: true
+    embed-resources: true
+execute:
+  echo: false
+# vignette: >
+#   %\VignetteIndexEntry{r-vs-stata}
+#   %\VignetteEncoding{UTF-8}
+#   %\VignetteEngine{quarto::pdf}
+editor_options:
+  chunk_output_type: console
+---
+
+# R vs. STATA
+
+There apparently are [differences](https://rstudio-pubs-static.s3.amazonaws.com/279455_1ca98bc2ce5f45ed9ea20a647ef0c4b1.html) between `pweight` and `aweight` in STATA, and `weights` in R (for instance in the `glm` function). To summarize:
+
+- In STATA, `pweight` (probability weights) is equivalent to `aweight` (analytic weights) with robust standard errors.
+- `aweight` is equivalent to `weights` in `glm`.
+- `pweight` is equivalent to `weights` in `glm` with robust standard errors.
+
+Here I provide a numerical example to show that indeed the use of robust standard errors leads to results identical to those obtained in STATA with `pweight`.
+
+# A numerical example
+
+We will use the same data as [here](https://rstudio-pubs-static.s3.amazonaws.com/279455_1ca98bc2ce5f45ed9ea20a647ef0c4b1.html), so that we can match the results obtained in R with those obtained in STATA.
+
+```{r load-data}
+data(api, package = "survey")
+df <- apistrat |>
+  tibble::as_tibble() |>
+  dplyr::select(api00, ell, meals, mobility, cname, pw) |>
+  dplyr::mutate(
+    cname = dplyr::case_when(
+      cname %in% c("Fresno", "Santa Clara", "San Bernadino") ~ "Group1",
+      .default = "Group2"
+    )
+  )
+```
+
+The dataset `df` contains a column, `pw`, which represents our weights. The aim is to show that by calculating robust standard errors in R, we obtain the same results as those in STATA when using `pweight` (or `aweight` and robust standard errors).
+
+The results for STATA are shown below:
+
+```{stata}
+#| eval: false
+#| echo: true
+
+## . reg api00 ell meals mobility cname [pweight = pw]
+## (sum of wgt is   6.1940e+03)
+## 
+## Linear regression                                      Number of obs =     200
+##                                                        F(  4,   195) =  104.68
+##                                                        Prob > F      =  0.0000
+##                                                        R-squared     =  0.6601
+##                                                        Root MSE      =  72.589
+## 
+## ------------------------------------------------------------------------------
+##              |               Robust
+##        api00 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          ell |   -.513901   .4063997    -1.26   0.208    -1.315404     .287602
+##        meals |  -3.148314   .2925792   -10.76   0.000     -3.72534   -2.571288
+##     mobility |   .2346743   .4047053     0.58   0.563    -.5634871    1.032836
+##              |
+##        cname |
+##      Group2  |  -9.708186   19.92028    -0.49   0.627    -48.99504    29.57867
+##        _cons |   830.4303   21.18687    39.20   0.000     788.6455    872.2152
+## ------------------------------------------------------------------------------
+## 
+## . estout . using mod1.txt, cells("b se t p") stats(N) replace
+## (note: file mod1.txt not found)
+## (output written to mod1.txt)
+## 
+## . estimates store t1
+```
+
+```{r stata-res}
+stata_results <- tibble::tribble(
+  ~term, ~estimate, ~stderr,
+  "ell", -.513901, .4063997,
+  "meals", -3.148314, .2925792,
+  "mobility", .2346743, .4047053,
+  "cnameGroup2", -9.708186, 19.92028
+)
+```
+
+We will now fit a simple weighted linear model.
+
+```{r glm}
+#| echo: true
+
+mod <- glm(
+  api00 ~ ell + meals + mobility + cname,
+  data = df,
+  weights = pw
+)
+```
+
+As you can see in @tbl-basic, the standard errors differ.
+
+```{r basic-se}
+#| label: tbl-basic
+#| tbl-cap: Comparison of STATA's pweight with R's standard glm
+
+basic_se <- broom::tidy(mod) |>
+  dplyr::filter(
+    term != "(Intercept)"
+  ) |>
+  dplyr::select(term, estimate, std.error) |>
+  dplyr::rename(
+    stderr = "std.error"
+  )
+
+basic_se |>
+  dplyr::bind_rows(stata_results, .id = "model") |>
+  dplyr::mutate(
+    model = ifelse(
+      model == 1,
+      "R", "STATA"
+    )
+  ) |>
+  dplyr::select(model, term, stderr) |>
+  tidyr::pivot_wider(
+    names_from = model,
+    values_from = c(stderr)
+  ) |>
+  gt::gt() |>
+  gt::fmt_number(
+    decimals = 4
+  ) |>
+  gt::tab_footnote(
+    footnote = "Standard errors",
+    locations = gt::cells_column_labels(
+      columns = c("R", "STATA")
+    )
+  )
+```
+
+We will now estimate the standard errors using the `sandwich` R package.
+
+```{r robust-se}
+#| echo: true
+
+robust_se <- lmtest::coeftest(
+  mod,
+  vcov. = sandwich::vcovHC(mod, type = "HC1")
+)
+```
+
+```{r robust-result}
+#| label: tbl-robust
+#| tbl-cap: Comparison of STATA's pweight with R's robust glm
+
+robust_se |>
+  broom::tidy() |>
+  dplyr::filter(
+    term != "(Intercept)"
+  ) |>
+  dplyr::select(term, estimate, std.error) |>
+  dplyr::rename(
+    stderr = "std.error"
+  ) |>
+  dplyr::bind_rows(stata_results, .id = "model") |>
+  dplyr::mutate(
+    model = ifelse(
+      model == 1,
+      "R", "STATA"
+    )
+  ) |>
+  dplyr::select(model, term, stderr) |>
+  tidyr::pivot_wider(
+    names_from = model,
+    values_from = c(stderr)
+  ) |>
+  gt::gt() |>
+  gt::fmt_number(
+    decimals = 4
+  ) |>
+  gt::tab_footnote(
+    footnote = "Standard errors",
+    locations = gt::cells_column_labels(
+      columns = c("R", "STATA")
+    )
+  )
+```
+
+As you can see in @tbl-robust, now the standard errors match.
