@@ -1,0 +1,4 @@
+- source: r-vs-stata.qmd
+  quarto-pub:
+    - id: d1c43b78-af2c-4455-88ad-956863a22701
+      url: 'https://lorenzof.quarto.pub/r-vs-stata'
