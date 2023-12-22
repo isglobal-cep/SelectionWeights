@@ -8,10 +8,10 @@ format:
     embed-resources: true
 execute:
   echo: false
-# vignette: >
-#   %\VignetteIndexEntry{r-vs-stata}
-#   %\VignetteEncoding{UTF-8}
-#   %\VignetteEngine{quarto::pdf}
+vignette: >
+  %\VignetteIndexEntry{r-vs-stata}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{quarto::html}
 editor_options:
   chunk_output_type: console
 ---
