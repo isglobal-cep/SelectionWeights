@@ -6,11 +6,19 @@ Authors@R:
            comment = c(ORCID = "0000-0003-3031-322X"))
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
+URL: https://isglobal-cep.github.io/SelectionWeights/
+Suggests: 
+    broom,
+    dplyr,
+    gt,
+    knitr,
+    lmtest,
+    rmarkdown,
+    sandwich,
+    tibble,
+    tidyr
+VignetteBuilder: 
+    knitr
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-Suggests: 
-    knitr,
-    rmarkdown
-VignetteBuilder: knitr
-URL: https://isglobal-cep.github.io/SelectionWeights/
