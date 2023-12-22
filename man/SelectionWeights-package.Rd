@@ -11,7 +11,8 @@ What the package does (one paragraph).
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://isglobal-cep.github.io/SelectionWeights/}
+  \item \url{https://isglobal-cep.github.io/SelectionWeights/ VignetteBuilder: knitr}
+  \item \url{quarto}
 }
 
 }
