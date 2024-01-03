@@ -67,13 +67,17 @@ estimate_selection_weights <- function(dat,
                                        cv_control_sl,
                                        discrete_sl) {
   # Checks
-  ## Check all covariates are available
-  ## Check IDs match
-  ## Check formula
   ## Check winsorization
   ## Check grouping variable is available
+  checkmate::check_true(id_str %in% colnames(dat))
   ## Check sampling weights
+  checkmate::check_true(length(sampling_weights) == nrow(dat))
   ## Check moments
+  checkmate::check_number(
+    x = moments,
+    lower = 1,
+    null.ok = TRUE
+  )
   ##############################################################################
 
   # Process data
