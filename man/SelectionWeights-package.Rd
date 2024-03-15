@@ -4,15 +4,14 @@
 \name{SelectionWeights-package}
 \alias{SelectionWeights}
 \alias{SelectionWeights-package}
-\title{SelectionWeights: What the Package Does (One Line, Title Case)}
+\title{SelectionWeights: Estimation Of Balancing Weights For ATHLETE}
 \description{
-What the package does (one paragraph).
+Estimation of balancing weights for selection bias in the follow-up.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://isglobal-cep.github.io/SelectionWeights/ VignetteBuilder: knitr}
-  \item \url{quarto}
+  \item \url{https://isglobal-cep.github.io/SelectionWeights/}
 }
 
 }

@@ -40,7 +40,7 @@ It can include interactions and functions of the individual covariates
 (e.g., a cubic spline). A string.}
 
 \item{method_estimation}{The type of model to fit to estimate the
-balancing weights. It must be supported by the \link\link{WeightIt} R package.
+balancing weights. It must be supported by the \code{WeightIt} R package.
 The list of specific estimation methods can be found
 \href{https://ngreifer.github.io/WeightIt/reference/index.html}{here}. A string.}
 

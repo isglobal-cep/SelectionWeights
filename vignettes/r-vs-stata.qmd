@@ -1,15 +1,13 @@
 ---
 title: "R vs. STATA"
 format:
-  pdf:
-    toc: false
   html:
     toc: true
     embed-resources: true
 execute:
   echo: false
 vignette: >
-  %\VignetteIndexEntry{r-vs-stata}
+  %\VignetteIndexEntry{Differences between R and STATA for computing SEs}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{quarto::html}
 editor_options:

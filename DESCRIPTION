@@ -1,13 +1,12 @@
 Package: SelectionWeights
-Title: What the Package Does (One Line, Title Case)
+Title: Estimation Of Balancing Weights For ATHLETE
 Version: 0.0.0.9000
 Authors@R:
     person("Lorenzo", "Fabbri", , "lorenzo.fabbri@isglobal.org", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-3031-322X"))
-Description: What the package does (one paragraph).
+Description: Estimation of balancing weights for selection bias in the follow-up.
 License: MIT + file LICENSE
-URL: https://isglobal-cep.github.io/SelectionWeights/ VignetteBuilder:
-    knitr, quarto
+URL: https://isglobal-cep.github.io/SelectionWeights/
 Suggests: 
     broom,
     dplyr,
@@ -19,10 +18,8 @@ Suggests:
     testthat (>= 3.0.0),
     tibble,
     tidyr
-VignetteBuilder:
-    knitr,
-    quarto
+VignetteBuilder: quarto
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1

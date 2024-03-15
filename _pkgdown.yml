@@ -5,7 +5,7 @@ sidebar:
   structure: [links, license, community, citation, authors, dev]
 navbar:
   structure:
-    left: [intro, reference, articles, tutorials, news]
+    left: [intro, reference, articles, news]
     right: [search, github]
 footer:
   structure:
